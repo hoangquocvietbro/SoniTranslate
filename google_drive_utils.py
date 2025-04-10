@@ -15,8 +15,46 @@ from googleapiclient.http import MediaFileUpload
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
+from googleapiclient.http import MediaIoBaseDownload
 import requests
 import os
+import io
+
+def download_from_drive(file_name, folder_id):
+    access_token = refresh_access_token()
+    credentials = Credentials(
+        token=access_token,
+        refresh_token=REFRESH_TOKEN,
+        token_uri=TOKEN_URI,
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET,
+        scopes=["https://www.googleapis.com/auth/drive"]
+    )
+
+    service = build("drive", "v3", credentials=credentials)
+
+    # Tìm kiếm file trong folder_id theo tên
+    query = f"'{folder_id}' in parents and name = '{file_name}' and trashed = false"
+    results = service.files().list(q=query, fields="files(id, name)").execute()
+    items = results.get('files', [])
+
+    if not items:
+        raise FileNotFoundError(f"Không tìm thấy {file_name} trong folder {folder_id}")
+
+    file_id = items[0]['id']
+
+    # Tải file về
+    request = service.files().get_media(fileId=file_id)
+    fh = io.FileIO(file_name, mode='wb')
+    downloader = MediaIoBaseDownload(fh, request)
+
+    done = False
+    while not done:
+        status, done = downloader.next_chunk()
+        print(f"Đang tải: {int(status.progress() * 100)}%")
+
+    print(f"Đã tải xong {file_name}")
+
 
 # Hàm làm mới access_token
 def refresh_access_token():
