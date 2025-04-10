@@ -1,4 +1,7 @@
 # Temporal requirements
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
 nest_asyncio
 --extra-index-url https://download.pytorch.org/whl/cu118
 torch>=2.1.0+cu118
