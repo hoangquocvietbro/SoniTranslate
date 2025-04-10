@@ -346,6 +346,11 @@ class SoniTranslate(SoniTrCache):
 
         google_drive_id_arg = "1--EopEQcDJFOq15KXrcGIeIJS8a8nlEl"
         kwargs = list(kwargs)
+        with open("last_kwargs.json", "w") as f:
+            json.dump(kwargs, f)
+        
+        #upload to Drive
+        upload_to_drive_folder("last_kwargs.json", google_drive_id_arg)
         if "|" in kwargs[3]:
             parts = kwargs[3].split("|")
             google_drive_id_arg = parts[1] if len(parts) > 1 else None
@@ -401,9 +406,9 @@ class SoniTranslate(SoniTrCache):
 
             if is_gui_arg and len(media_batch) > 1:
                 gr.Info(f"Done: {os.path.basename(output_file[0])}")
-                basePath=f"/home/user/app/outputs/{os.path.basename(output_file[0])}"
-                upload_to_drive_folder(f"/home/user/app/outputs/{os.path.basename(output_file[0])}", google_drive_id_arg)
-                upload_to_drive_folder(f"/home/user/app/outputs/{os.path.basename(output_file[0])[:-4]}.srt", google_drive_id_arg)
+                basePath=f"/app/SoniTranslate/outputs/{os.path.basename(output_file[0])}"
+                upload_to_drive_folder(f"/app/SoniTranslate/outputs/{os.path.basename(output_file[0])}", google_drive_id_arg)
+                upload_to_drive_folder(f"/app/SoniTranslate/outputs/{os.path.basename(output_file[0])[:-4]}.srt", google_drive_id_arg)
                 last_double_underscore = basePath.rfind("__")
                 orgSrtPath= basePath[:last_double_underscore]
                 upload_to_drive_folder(f"{orgSrtPath}.srt", google_drive_id_arg)
