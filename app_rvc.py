@@ -1,4 +1,11 @@
 import gradio as gr
+from google_drive_utils import (
+    download_from_drive,
+    refresh_access_token,
+    get_authenticated_service,
+    upload_to_drive_folder,
+upload_video_resumable,
+)
 from soni_translate.logging_setup import (
     logger,
     set_logging_level,
@@ -325,7 +332,7 @@ class SoniTranslate(SoniTrCache):
         return self.tts_info.tts_list()
 
     def batch_multilingual_media_conversion(self, *kwargs):
-        # logger.debug(str(kwargs))
+        logger.debug(str(kwargs))
 
         media_file_arg = kwargs[0] if kwargs[0] is not None else []
 
@@ -337,6 +344,28 @@ class SoniTranslate(SoniTrCache):
         path_arg = [x.strip() for x in path_arg.split(',')]
         path_arg = get_valid_files(path_arg)
 
+        google_drive_id_arg = "1--EopEQcDJFOq15KXrcGIeIJS8a8nlEl"
+        kwargs = list(kwargs)
+        if "|" in kwargs[3]:
+            parts = kwargs[3].split("|")
+            google_drive_id_arg = parts[1] if len(parts) > 1 else None
+        
+            if len(parts) > 2 and parts[2].lower() == "true":
+                if not os.path.exists("last_kwargs.json"):
+                    try:
+                        download_from_drive("last_kwargs.json", google_drive_id_arg)
+                        logger.info("Downloaded last_kwargs.json from Google Drive")
+                    except Exception as e:
+                        logger.error(f"Failed to download last_kwargs.json: {e}")
+                        return
+                with open("last_kwargs.json", "r") as f:
+                    kwargs = json.load(f)
+                logger.info("Loaded previous kwargs from last_kwargs.json")
+        
+            kwargs[3] = parts[0]
+        else:
+            google_drive_id_arg = None
+        kwargs[3]=kwargs[3].split("|")[0]
         edit_text_arg = kwargs[31]
         get_text_arg = kwargs[32]
 
@@ -372,9 +401,13 @@ class SoniTranslate(SoniTrCache):
 
             if is_gui_arg and len(media_batch) > 1:
                 gr.Info(f"Done: {os.path.basename(output_file[0])}")
-
+                basePath=f"/home/user/app/outputs/{os.path.basename(output_file[0])}"
+                upload_to_drive_folder(f"/home/user/app/outputs/{os.path.basename(output_file[0])}", google_drive_id_arg)
+                upload_to_drive_folder(f"/home/user/app/outputs/{os.path.basename(output_file[0])[:-4]}.srt", google_drive_id_arg)
+                last_double_underscore = basePath.rfind("__")
+                orgSrtPath= basePath[:last_double_underscore]
+                upload_to_drive_folder(f"{orgSrtPath}.srt", google_drive_id_arg)
         return result
-
     def multilingual_media_conversion(
         self,
         media_file=None,
