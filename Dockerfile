@@ -45,6 +45,7 @@ WORKDIR /app
 
 RUN rm -rf /app/SoniTranslate
 RUN git clone https://github.com/hoangquocvietbro/SoniTranslate.git
+RUN chmod -R 777 /app
 RUN chmod -R 777 /app/SoniTranslate
 # --- START SoniTranslate specific installations within the conda environment ---
 
@@ -73,6 +74,7 @@ RUN cd /app/SoniTranslate && /opt/conda/bin/conda run -n sonitr pip install -q T
 # Uninstall and reinstall specific versions of numpy, pandas, librosa (as in original)
 RUN cd /app/SoniTranslate && /opt/conda/bin/conda run -n sonitr pip uninstall -y numpy pandas librosa
 RUN cd /app/SoniTranslate && /opt/conda/bin/conda run -n sonitr pip install numpy==1.23.1 pandas==1.4.3 librosa==0.10.0
+
 RUN cd /app/SoniTranslate && /opt/conda/bin/conda run -n sonitr pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib
 # Install older TTS and torchcrepe versions (as in original)
 # WARNING: This might conflict with TTS==0.21.1 installed earlier. Kept as per original logic.
@@ -91,7 +93,7 @@ RUN chmod +x /app/entrypoint.sh
 
 # Set final working directory
 WORKDIR /app/SoniTranslate
-
+ 
 # Define the command to run the application using the entrypoint script
 # It's assumed entrypoint.sh activates the conda environment and runs the app
 CMD ["/bin/bash", "-c", "/app/entrypoint.sh"]
