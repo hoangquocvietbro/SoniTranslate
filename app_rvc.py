@@ -1,6 +1,7 @@
 import gradio as gr
 from google_drive_utils import (
     refresh_access_token,
+    download_from_drive,
     get_authenticated_service,
     upload_to_drive_folder,
     upload_video_resumable,
@@ -330,7 +331,7 @@ class SoniTranslate(SoniTrCache):
 
         return self.tts_info.tts_list()
 
-     def batch_multilingual_media_conversion(self, *kwargs):
+    def batch_multilingual_media_conversion(self, *kwargs):
         logger.debug(str(kwargs))
 
         media_file_arg = kwargs[0] if kwargs[0] is not None else []
@@ -343,10 +344,25 @@ class SoniTranslate(SoniTrCache):
         path_arg = [x.strip() for x in path_arg.split(',')]
         path_arg = get_valid_files(path_arg)
 
-        google_drive_id_arg="1--EopEQcDJFOq15KXrcGIeIJS8a8nlEl"
+        google_drive_id_arg = "1--EopEQcDJFOq15KXrcGIeIJS8a8nlEl"
         kwargs = list(kwargs)
         if "|" in kwargs[3]:
-            google_drive_id_arg = kwargs[3].split("|")[1]
+            parts = kwargs[3].split("|")
+            google_drive_id_arg = parts[1] if len(parts) > 1 else None
+        
+            if len(parts) > 2 and parts[2].lower() == "true":
+                if not os.path.exists("last_kwargs.json"):
+                    try:
+                        download_from_drive("last_kwargs.json", google_drive_id_arg)
+                        logger.info("Downloaded last_kwargs.json from Google Drive")
+                    except Exception as e:
+                        logger.error(f"Failed to download last_kwargs.json: {e}")
+                        return
+                with open("last_kwargs.json", "r") as f:
+                    kwargs = json.load(f)
+                logger.info("Loaded previous kwargs from last_kwargs.json")
+        
+            kwargs[3] = parts[0]
         else:
             google_drive_id_arg = None
         kwargs[3]=kwargs[3].split("|")[0]
