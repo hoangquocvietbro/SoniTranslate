@@ -73,7 +73,7 @@ RUN cd /app/SoniTranslate && /opt/conda/bin/conda run -n sonitr pip install -q T
 # Uninstall and reinstall specific versions of numpy, pandas, librosa (as in original)
 RUN cd /app/SoniTranslate && /opt/conda/bin/conda run -n sonitr pip uninstall -y numpy pandas librosa
 RUN cd /app/SoniTranslate && /opt/conda/bin/conda run -n sonitr pip install numpy==1.23.1 pandas==1.4.3 librosa==0.10.0
-
+RUN cd /app/SoniTranslate && /opt/conda/bin/conda run -n sonitr pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib
 # Install older TTS and torchcrepe versions (as in original)
 # WARNING: This might conflict with TTS==0.21.1 installed earlier. Kept as per original logic.
 RUN cd /app/SoniTranslate && /opt/conda/bin/conda run -n sonitr pip install "tts<0.21.0" "torchcrepe<0.0.20"
