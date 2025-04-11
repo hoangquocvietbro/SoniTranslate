@@ -360,6 +360,7 @@ class SoniTranslate(SoniTrCache):
                         return
                 with open("last_kwargs.json", "r") as f:
                     kwargs = json.load(f)
+                    logger.debug(str(kwargs))
                 logger.info("Loaded previous kwargs from last_kwargs.json")
             
             else:
