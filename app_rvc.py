@@ -360,11 +360,11 @@ class SoniTranslate(SoniTrCache):
                     try: 
                         with open("translatedLink.json", "r") as f:
                             lastTranslatedLink = json.load(f)
-                        idx = kwargs[1].index(lastTranslatedLink)
+                        idx = kwargs[1].index(lastTranslatedLink["link"])
                         kwargs[1]=kwargs[1][idx + 1:]
-                        logger.info("Loaded previous translated link from last_kwargs.json")
-                    except:
-                        logger.error(f"Failed to Loaded previous translated link from last_kwargs.json")
+                        logger.info("Loaded previous translated link from translatedLink.json")
+                    except Exception as e:
+                        logger.error(f"Failed to Loaded previous translated link from translatedLink.json: {e} ")
                 logger.info("Loaded previous kwargs from last_kwargs.json")
             
             else:
@@ -429,7 +429,7 @@ class SoniTranslate(SoniTrCache):
                 orgSrtPath= basePath[:last_double_underscore]
                 upload_to_drive_folder(f"{orgSrtPath}.srt", google_drive_id_arg)
                 with open("translatedLink.json", "w") as f:
-                    json.dump(media, f)
+                    json.dump({"link": media}, f, indent=4)
                 #upload to Drive
                 upload_to_drive_folder("translatedLink.json", google_drive_id_arg)
         return result
