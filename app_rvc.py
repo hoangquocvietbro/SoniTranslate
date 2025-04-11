@@ -361,8 +361,9 @@ class SoniTranslate(SoniTrCache):
                         with open("translatedLink.json", "r") as f:
                             lastTranslatedLink = json.load(f)
                             logger.debug(lastTranslatedLink)
-                        idx = kwargs[1].index(lastTranslatedLink)
-                        kwargs[1]=kwargs[1][idx + 1:]
+                        kwargs1Array = kwargs[1].split(',')
+                        idx = kwargs1Array.index(lastTranslatedLink)
+                        kwargs[1] = ','.join(kwargs1Array[idx + 1:])
                         logger.info("Loaded previous translated link from translatedLink.json")
                     except Exception as e:
                         logger.error(f"Failed to Loaded previous translated link from translatedLink.json: {e} ")
