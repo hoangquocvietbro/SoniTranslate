@@ -349,6 +349,19 @@ class SoniTranslate(SoniTrCache):
                 with open("last_kwargs.json", "r") as f:
                     kwargs = json.load(f)
                     logger.debug(str(kwargs))
+                    
+                    if not os.path.exists("translatedLink.json"):
+                        try:
+                            download_from_drive("translatedLink.json", google_drive_id_arg)
+                            logger.info("Downloaded translatedLink.json from Google Drive")
+                        except Exception as e:
+                            logger.error(f"Failed to download translatedLink.json: {e}")
+                            return
+                    with open("translatedLink.json", "r") as f:
+                        lastTranslatedLink = json.load(f)
+                    idx = kwargs[1].index(lastTranslatedLink)
+                    kwargs[1]=kwargs[1][idx + 1:]
+                    logger.info("Loaded previous translated link from last_kwargs.json")
                 logger.info("Loaded previous kwargs from last_kwargs.json")
             
             else:
@@ -412,6 +425,10 @@ class SoniTranslate(SoniTrCache):
                 last_double_underscore = basePath.rfind("__")
                 orgSrtPath= basePath[:last_double_underscore]
                 upload_to_drive_folder(f"{orgSrtPath}.srt", google_drive_id_arg)
+                with open("translatedLink.json", "w") as f:
+                    json.dump(media, f)
+                #upload to Drive
+                upload_to_drive_folder("translatedLink.json", google_drive_id_arg)
         return result
     def multilingual_media_conversion(
         self,
