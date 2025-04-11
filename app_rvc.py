@@ -346,11 +346,6 @@ class SoniTranslate(SoniTrCache):
 
         google_drive_id_arg = "1--EopEQcDJFOq15KXrcGIeIJS8a8nlEl"
         kwargs = list(kwargs)
-        with open("last_kwargs.json", "w") as f:
-            json.dump(kwargs, f)
-        
-        #upload to Drive
-        upload_to_drive_folder("last_kwargs.json", google_drive_id_arg)
         if "|" in kwargs[3]:
             parts = kwargs[3].split("|")
             google_drive_id_arg = parts[1] if len(parts) > 1 else None
@@ -366,8 +361,14 @@ class SoniTranslate(SoniTrCache):
                 with open("last_kwargs.json", "r") as f:
                     kwargs = json.load(f)
                 logger.info("Loaded previous kwargs from last_kwargs.json")
-        
+            
+            else:
+                with open("last_kwargs.json", "w") as f:
+                    json.dump(kwargs, f)
+                #upload to Drive
+                upload_to_drive_folder("last_kwargs.json", google_drive_id_arg)
             kwargs[3] = parts[0]
+            
         else:
             google_drive_id_arg = None
         kwargs[3]=kwargs[3].split("|")[0]
