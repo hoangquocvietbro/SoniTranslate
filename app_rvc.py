@@ -332,18 +332,6 @@ class SoniTranslate(SoniTrCache):
         return self.tts_info.tts_list()
 
     def batch_multilingual_media_conversion(self, *kwargs):
-        logger.debug(str(kwargs))
-
-        media_file_arg = kwargs[0] if kwargs[0] is not None else []
-
-        link_media_arg = kwargs[1]
-        link_media_arg = [x.strip() for x in link_media_arg.split(',')]
-        link_media_arg = get_link_list(link_media_arg)
-
-        path_arg = kwargs[2]
-        path_arg = [x.strip() for x in path_arg.split(',')]
-        path_arg = get_valid_files(path_arg)
-
         google_drive_id_arg = "1--EopEQcDJFOq15KXrcGIeIJS8a8nlEl"
         kwargs = list(kwargs)
         if "|" in kwargs[3]:
@@ -372,6 +360,16 @@ class SoniTranslate(SoniTrCache):
             
         else:
             google_drive_id_arg = None
+        media_file_arg = kwargs[0] if kwargs[0] is not None else []
+
+        link_media_arg = kwargs[1]
+        link_media_arg = [x.strip() for x in link_media_arg.split(',')]
+        link_media_arg = get_link_list(link_media_arg)
+
+        path_arg = kwargs[2]
+        path_arg = [x.strip() for x in path_arg.split(',')]
+        path_arg = get_valid_files(path_arg)
+
         kwargs[3]=kwargs[3].split("|")[0]
         edit_text_arg = kwargs[31]
         get_text_arg = kwargs[32]
