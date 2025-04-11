@@ -84,7 +84,7 @@ def get_authenticated_service():
     )
     return build("youtube", "v3", credentials=credentials)
 
-    
+# Tải video lên google drive thay thế file nếu đã tồn tại
 def upload_to_drive_folder(file_path, folder_id):
     access_token = refresh_access_token()
     credentials = Credentials(
@@ -93,34 +93,55 @@ def upload_to_drive_folder(file_path, folder_id):
         token_uri=TOKEN_URI,
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET,
-        scopes=["https://www.googleapis.com/auth/drive.file"]  # hoặc "https://www.googleapis.com/auth/drive"
+        scopes=["https://www.googleapis.com/auth/drive.file"]
     )
 
     drive_service = build("drive", "v3", credentials=credentials)
 
+    file_name = os.path.basename(file_path)  # chỉ lấy tên file, không lấy đường dẫn
     file_metadata = {
-        "name": file_path,
-        "parents": [folder_id]  # ID thư mục Drive bạn muốn upload vào
+        "name": file_name,
+        "parents": [folder_id]
     }
-
     media = MediaFileUpload(file_path, resumable=True)
 
     try:
-        request = drive_service.files().create(
-            body=file_metadata,
-            media_body=media,
-            fields="id, webViewLink, webContentLink"
-        )
-        response = request.execute()
-        print("✅ Upload thành công lên Google Drive!")
-        print("🆔 File ID:", response["id"])
-        print("🔗 Link xem:", response.get("webViewLink"))
-        print("🔗 Link tải:", response.get("webContentLink"))
-        return response
+        # Tìm file trùng tên trong thư mục
+        query = f"'{folder_id}' in parents and name='{file_name}' and trashed=false"
+        response = drive_service.files().list(q=query, spaces='drive', fields='files(id, name)').execute()
+        files = response.get('files', [])
+
+        if files:
+            # Nếu đã tồn tại file, thì update
+            file_id = files[0]['id']
+            updated_file = drive_service.files().update(
+                fileId=file_id,
+                media_body=media,
+                fields="id, webViewLink, webContentLink"
+            ).execute()
+            print("♻️ Đã cập nhật file cũ trên Google Drive!")
+            print("🆔 File ID:", updated_file["id"])
+            print("🔗 Link xem:", updated_file.get("webViewLink"))
+            print("🔗 Link tải:", updated_file.get("webContentLink"))
+            return updated_file
+        else:
+            # Nếu chưa có file trùng tên, thì tạo mới
+            created_file = drive_service.files().create(
+                body=file_metadata,
+                media_body=media,
+                fields="id, webViewLink, webContentLink"
+            ).execute()
+            print("✅ Upload thành công file mới lên Google Drive!")
+            print("🆔 File ID:", created_file["id"])
+            print("🔗 Link xem:", created_file.get("webViewLink"))
+            print("🔗 Link tải:", created_file.get("webContentLink"))
+            return created_file
+
     except Exception as e:
         print("❌ Lỗi upload:", e)
 
-# Tải video lên với chế độ resumable upload
+
+# Tải video lên youtube với chế độ resumable upload
 def upload_video_resumable():
     youtube = get_authenticated_service()
     request_body = {
