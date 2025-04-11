@@ -357,11 +357,14 @@ class SoniTranslate(SoniTrCache):
                         except Exception as e:
                             logger.error(f"Failed to download translatedLink.json: {e}")
                             return
-                    with open("translatedLink.json", "r") as f:
-                        lastTranslatedLink = json.load(f)
-                    idx = kwargs[1].index(lastTranslatedLink)
-                    kwargs[1]=kwargs[1][idx + 1:]
-                    logger.info("Loaded previous translated link from last_kwargs.json")
+                    try: 
+                        with open("translatedLink.json", "r") as f:
+                            lastTranslatedLink = json.load(f)
+                        idx = kwargs[1].index(lastTranslatedLink)
+                        kwargs[1]=kwargs[1][idx + 1:]
+                        logger.info("Loaded previous translated link from last_kwargs.json")
+                    except:
+                        logger.error(f"Failed to Loaded previous translated link from last_kwargs.json")
                 logger.info("Loaded previous kwargs from last_kwargs.json")
             
             else:
