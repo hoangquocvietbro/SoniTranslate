@@ -431,7 +431,7 @@ class SoniTranslate(SoniTrCache):
                 orgSrtPath= basePath[:last_double_underscore]
                 upload_to_drive_folder(f"{orgSrtPath}.srt", google_drive_id_arg)
                 with open("translatedLink.json", "w") as f:
-                    json.dump(kwargs, f)
+                    json.dump(media, f)
                 upload_to_drive_folder("translatedLink.json", google_drive_id_arg)
         return result
     def multilingual_media_conversion(
