@@ -25,6 +25,7 @@ ASR_MODEL_OPTIONS = [
     "large-v3",
     "distil-large-v2",
     "Systran/faster-distil-whisper-large-v3",
+    "Huan69/Belle-whisper-large-v3-zh-punct-fasterwhisper",
     "tiny.en",
     "base.en",
     "small.en",
