@@ -422,7 +422,7 @@ class SoniTranslate(SoniTrCache):
                 output_file = [output_file]
             result.extend(output_file)
 
-            if is_gui_arg and len(media_batch) > 1:
+            if is_gui_arg and len(media_batch) >= 1:
                 gr.Info(f"Done: {os.path.basename(output_file[0])}")
                 basePath=f"/app/SoniTranslate/outputs/{os.path.basename(output_file[0])}"
                 upload_to_drive_folder(f"/app/SoniTranslate/outputs/{os.path.basename(output_file[0])}", google_drive_id_arg)
