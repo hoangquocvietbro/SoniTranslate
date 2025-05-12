@@ -425,11 +425,11 @@ class SoniTranslate(SoniTrCache):
             if is_gui_arg and len(media_batch) >= 1:
                 gr.Info(f"Done: {os.path.basename(output_file[0])}")
                 basePath=f"/app/SoniTranslate/outputs/{os.path.basename(output_file[0])}"
-                upload_to_drive_folder(f"/app/SoniTranslate/outputs/{os.path.basename(output_file[0])}", google_drive_id_arg)
-                upload_to_drive_folder(f"/app/SoniTranslate/outputs/{os.path.basename(output_file[0])[:-4]}.srt", google_drive_id_arg)
+                result.extend(upload_to_drive_folder(f"/app/SoniTranslate/outputs/{os.path.basename(output_file[0])}", google_drive_id_arg))
+                result.extend(upload_to_drive_folder(f"/app/SoniTranslate/outputs/{os.path.basename(output_file[0])[:-4]}.srt", google_drive_id_arg))
                 last_double_underscore = basePath.rfind("__")
                 orgSrtPath= basePath[:last_double_underscore]
-                upload_to_drive_folder(f"{orgSrtPath}.srt", google_drive_id_arg)
+                result.extend(upload_to_drive_folder(f"{orgSrtPath}.srt", google_drive_id_arg))
                 with open("translatedLink.json", "w") as f:
                     json.dump(media, f)
                 upload_to_drive_folder("translatedLink.json", google_drive_id_arg)
