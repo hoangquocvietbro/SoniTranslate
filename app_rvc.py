@@ -420,7 +420,9 @@ class SoniTranslate(SoniTrCache):
 
             if isinstance(output_file, str):
                 output_file = [output_file]
+            logger.debug(str(output_file))
             result.extend(output_file)
+            logger.debug(str(result))
 
             if is_gui_arg and len(media_batch) >= 1:
                 gr.Info(f"Done: {os.path.basename(output_file[0])}")
@@ -433,6 +435,7 @@ class SoniTranslate(SoniTrCache):
                 with open("translatedLink.json", "w") as f:
                     json.dump(media, f)
                 upload_to_drive_folder("translatedLink.json", google_drive_id_arg)
+                logger.debug(str(result))
         return result
     def multilingual_media_conversion(
         self,
