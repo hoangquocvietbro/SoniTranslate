@@ -1,7 +1,7 @@
 # Thông tin OAuth 2.0 từ Google Developer Console
 CLIENT_ID = "925033313970-9lr61c64njpv9brqnp3rc4ut7kdt0uli.apps.googleusercontent.com"
 CLIENT_SECRET = "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"
-REFRESH_TOKEN = "4/0AUJR-x7wVQb1y8JvlqIIZb0esYu8fSroKsL0WWN2IhszVyKGCr4lwmpGb8XqbgXPtfDK5g"
+REFRESH_TOKEN = "1//04GHYeTks3WP8CgYIARAAGAQSNwF-L9IrIrHhvI9jmCi534N0gtTq-_osoRx_5I650Wjl66YYWSMsSz06kQ3-7DA102P6T0soAGU"
 TOKEN_URI = "https://oauth2.googleapis.com/token"
 VIDEO_FILE = "output.mp4"  # Đường dẫn tệp video
 TITLE = "Your Video Title"
